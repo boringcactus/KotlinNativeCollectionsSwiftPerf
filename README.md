@@ -1,5 +1,7 @@
 # Kotlin Multiplatform Has Serious Performance Issues Turning Kotlin Collections Into Swift Collections
 
+Kotlin bug report: [KT-76256](https://youtrack.jetbrains.com/issue/KT-76256)
+
 If you have a Kotlin function (including a getter) that returns a `Map<K, V>` or `List<T>`, calling it from Swift will return a Swift `[K: V]` or `[T]`.  This is convenient, but I was surprised to discover just how much it costs at runtime.
 
 | Android                                                                                      | iOS                                                                                  |

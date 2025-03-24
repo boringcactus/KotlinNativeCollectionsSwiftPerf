@@ -15,19 +15,19 @@ data class Data(val list: List<String>, val map: Map<String, String>) {
 }
 ```
 
-which exposes the collections directly and also provides indirect getters for accessing elements of those collections. In this case, we need to get the total length of the strings at some fixed positions in the list or with some fixed keys in the map. The naive approach is to just use `data.list[i]` or `data.map[key]` as needed, but a very slightly optimized approach would be to call the getter only once. Intuitively, using the indirect getters should not be meaningfully faster than either approach.
+which exposes the collections directly and also provides indirect getters for accessing elements of those collections. In this case, we need to get the total length of the strings at some fixed positions in the list or with some fixed keys in the map. The naive approach is to just use `data.list[i]` or `data.map[key]` as needed, but a very slightly optimized approach would be to get `data.list` or `data.map` only once. Intuitively, using the indirect getters should not be meaningfully faster than either approach.
 
 On Android, it saves a handful of microseconds to call the getter only once or to go via the indirect getter, but even the naive approach is fast enough that it doesn't matter:
 
 <table>
 <thead>
 <tr>
-<th>Android code</th><th>absolute time</th><th>relative speed</th>
+<th>Label</th><th>Android code</th><th>absolute time</th><th>relative speed</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td>Access list, getting every time</td><td>
 
 ```kotlin
 var totalLength = 0
@@ -39,7 +39,7 @@ for (i in 1..5) {
 </td><td>25.29us</td><td>1x</td>
 </tr>
 <tr>
-<td>
+<td>Access list, getting once</td><td>
 
 ```kotlin
 val list = data.list
@@ -52,7 +52,7 @@ for (i in 1..5) {
 </td><td>500ns</td><td>51x</td>
 </tr>
 <tr>
-<td>
+<td>Access list, getting indirectly</td><td>
 
 ```kotlin
 var totalLength = 0
@@ -64,7 +64,7 @@ for (i in 1..5) {
 </td><td>542ns</td><td>47x</td>
 </tr>
 <tr>
-<td>
+<td>Access map, getting every time</td><td>
 
 ```kotlin
 var totalLength = 0
@@ -76,7 +76,7 @@ for (key in listOf("lorem", "ipsum", "dolor", "sit", "amet")) {
 </td><td>17us</td><td>1x</td>
 </tr>
 <tr>
-<td>
+<td>Access map, getting once</td><td>
 
 ```kotlin
 val map = data.map
@@ -89,7 +89,7 @@ for (key in listOf("lorem", "ipsum", "dolor", "sit", "amet")) {
 </td><td>583ns</td><td>29x</td>
 </tr>
 <tr>
-<td>
+<td>Access map, getting indirectly</td><td>
 
 ```kotlin
 var totalLength = 0
@@ -108,12 +108,12 @@ On iOS, however, the getter is so slow that calling it five times takes over a s
 <table>
 <thead>
 <tr>
-<th>iOS code</th><th>absolute time</th><th>relative speed</th>
+<th>Label</th><th>iOS code</th><th>absolute time</th><th>relative speed</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td>Access list, getting every time</td><td>
 
 ```swift
 var totalLength = 0
@@ -127,7 +127,7 @@ for i in 1...5 {
 </td><td>1.56s</td><td>1x</td>
 </tr>
 <tr>
-<td>
+<td>Access list, getting once</td><td>
 
 ```swift
 let list = data!.list
@@ -142,7 +142,7 @@ for i in 1...5 {
 </td><td>145.18ms</td><td>11x</td>
 </tr>
 <tr>
-<td>
+<td>Access list, getting indirectly</td><td>
 
 ```swift
 var totalLength = 0
@@ -154,7 +154,7 @@ for i in 1...5 {
 </td><td>26.75us</td><td>58503x</td>
 </tr>
 <tr>
-<td>
+<td>Access map, getting every time</td><td>
 
 ```swift
 var totalLength = 0
@@ -166,7 +166,7 @@ for key in ["lorem", "ipsum", "dolor", "sit", "amet"] {
 </td><td>2.21s</td><td>1x</td>
 </tr>
 <tr>
-<td>
+<td>Access map, getting once</td><td>
 
 ```swift
 let map = data!.map
@@ -179,7 +179,7 @@ for key in ["lorem", "ipsum", "dolor", "sit", "amet"] {
 </td><td>402.86ms</td><td>5x</td>
 </tr>
 <tr>
-<td>
+<td>Access map, getting indirectly</td><td>
 
 ```swift
 var totalLength = 0
